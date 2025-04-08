@@ -9,7 +9,7 @@ using TeamsCX.WFM.API.Models;
 
 namespace TeamsCX.WFM.API.Services
 {
-    public class MicrosoftGraphService
+    public class MicrosoftGraphService : IMicrosoftGraphService
     {
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;

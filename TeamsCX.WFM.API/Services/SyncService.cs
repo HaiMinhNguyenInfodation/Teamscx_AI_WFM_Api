@@ -12,9 +12,9 @@ namespace TeamsCX.WFM.API.Services
     public class SyncService
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly MicrosoftGraphService _graphService;
+        private readonly IMicrosoftGraphService _graphService;
 
-        public SyncService(IServiceProvider serviceProvider, MicrosoftGraphService graphService)
+        public SyncService(IServiceProvider serviceProvider, IMicrosoftGraphService graphService)
         {
             _serviceProvider = serviceProvider;
             _graphService = graphService;

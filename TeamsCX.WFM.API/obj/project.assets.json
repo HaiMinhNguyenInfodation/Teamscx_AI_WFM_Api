@@ -6417,11 +6417,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Projects\\INFODATION_Projects\\TeamsCX\\AI\\WFM\\WFM_new_04_08\\TeamsCX.WFM.API\\TeamsCX.WFM.API.csproj",
+      "projectUniqueName": "D:\\Projects\\INFODATION_Projects\\TeamsCX\\Teamscx_AI_WFM_Api\\TeamsCX.WFM.API\\TeamsCX.WFM.API.csproj",
       "projectName": "TeamsCX.WFM.API",
-      "projectPath": "D:\\Projects\\INFODATION_Projects\\TeamsCX\\AI\\WFM\\WFM_new_04_08\\TeamsCX.WFM.API\\TeamsCX.WFM.API.csproj",
+      "projectPath": "D:\\Projects\\INFODATION_Projects\\TeamsCX\\Teamscx_AI_WFM_Api\\TeamsCX.WFM.API\\TeamsCX.WFM.API.csproj",
       "packagesPath": "C:\\Users\\HaiMinhNguyen\\.nuget\\packages\\",
-      "outputPath": "D:\\Projects\\INFODATION_Projects\\TeamsCX\\AI\\WFM\\WFM_new_04_08\\TeamsCX.WFM.API\\obj\\",
+      "outputPath": "D:\\Projects\\INFODATION_Projects\\TeamsCX\\Teamscx_AI_WFM_Api\\TeamsCX.WFM.API\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

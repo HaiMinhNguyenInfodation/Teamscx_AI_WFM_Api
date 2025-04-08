@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "9wYuc6fH7NY=",
+  "dgSpecHash": "sPw8ZIdHlcY=",
   "success": true,
-  "projectFilePath": "D:\\Projects\\INFODATION_Projects\\TeamsCX\\AI\\WFM\\WFM_new_04_08\\TeamsCX.WFM.API\\TeamsCX.WFM.API.csproj",
+  "projectFilePath": "D:\\Projects\\INFODATION_Projects\\TeamsCX\\Teamscx_AI_WFM_Api\\TeamsCX.WFM.API\\TeamsCX.WFM.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\HaiMinhNguyen\\.nuget\\packages\\azure.core\\1.44.1\\azure.core.1.44.1.nupkg.sha512",
     "C:\\Users\\HaiMinhNguyen\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
