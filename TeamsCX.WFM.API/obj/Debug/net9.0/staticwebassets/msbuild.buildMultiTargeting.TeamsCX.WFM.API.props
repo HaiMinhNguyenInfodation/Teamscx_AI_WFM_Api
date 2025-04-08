@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\TeamsCX.WFM.API.props" />
+</Project>
