@@ -15,10 +15,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Configure HttpClient for Microsoft Graph API
-builder.Services.AddHttpClient<MicrosoftGraphService>();
+builder.Services.AddHttpClient<IMicrosoftGraphService, MicrosoftGraphService>();
 
 // Register services
-builder.Services.AddSingleton<MicrosoftGraphService>();
+builder.Services.AddSingleton<IMicrosoftGraphService, MicrosoftGraphService>();
 builder.Services.AddSingleton<SyncService>();
 builder.Services.AddHostedService<SyncBackgroundService>();
 
