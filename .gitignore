@@ -1,0 +1,67 @@
+# .NET Core
+bin/
+obj/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.csproj.user
+*.csproj.user.*
+*.user.*
+*.user.*.*
+
+# Visual Studio
+.vs/
+*.swp
+*.*~
+project.lock.json
+.DS_Store
+*.pyc
+nupkg/
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Database
+*.mdf
+*.ldf
+*.ndf
+
+# Environment files
+*.env
+*.env.local
+*.env.*.local
+appsettings.*.json
+!appsettings.json
+
+# IDE - Visual Studio
+.vscode/
+*.swp
+*.*~
+project.lock.json
+.DS_Store
+*.pyc
+nupkg/
+
+# Test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.trx
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+**/packages/* 
