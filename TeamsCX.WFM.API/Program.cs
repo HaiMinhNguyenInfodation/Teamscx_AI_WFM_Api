@@ -25,6 +25,9 @@ builder.Services.AddSingleton<SyncService>();
 builder.Services.AddHostedService<SyncBackgroundService>();
 builder.Services.AddHostedService<AgentActiveQueueMonitorService>();
 builder.Services.AddHostedService<AgentStatusMonitorService>();
+builder.Services.AddScoped<IRealTimeService, RealTimeService>();
+builder.Services.AddScoped<IUpToNowService, UpToNowService>();
+builder.Services.AddScoped<IAgentStatusService, AgentStatusService>();
 
 var app = builder.Build();
 

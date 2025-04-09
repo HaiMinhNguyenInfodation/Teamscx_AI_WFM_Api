@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TeamsCX.WFM.API.Data;
 using TeamsCX.WFM.API.Models;
+using Microsoft.Data.SqlClient;
 
 namespace TeamsCX.WFM.API.Services
 {
@@ -86,12 +87,29 @@ namespace TeamsCX.WFM.API.Services
 
                     if (existingAgent == null)
                     {
-                        existingAgent = new Agent
+                        try
                         {
-                            MicrosoftUserId = microsoftUserId,
-                            CreatedAt = DateTime.UtcNow
-                        };
-                        context.Agents.Add(existingAgent);
+                            existingAgent = new Agent
+                            {
+                                MicrosoftUserId = microsoftUserId,
+                                CreatedAt = DateTime.UtcNow
+                            };
+                            context.Agents.Add(existingAgent);
+                            await context.SaveChangesAsync(); // Save immediately to handle unique constraint
+                        }
+                        catch (DbUpdateException ex) when (ex.InnerException is SqlException sqlEx && sqlEx.Number == 2601)
+                        {
+                            // If we get a duplicate key error, the agent was added by another operation
+                            // Try to fetch the agent again
+                            existingAgent = await context.Agents
+                                .FirstOrDefaultAsync(a => a.MicrosoftUserId == microsoftUserId);
+
+                            if (existingAgent == null)
+                            {
+                                _logger.LogError(ex, "Failed to create or find agent with MicrosoftUserId: {MicrosoftUserId}", microsoftUserId);
+                                continue;
+                            }
+                        }
                     }
 
                     existingAgent.DisplayName = member.GetProperty("displayName").GetString();
@@ -260,8 +278,8 @@ namespace TeamsCX.WFM.API.Services
                     var sharedShift = shift.GetProperty("sharedShift");
                     if (sharedShift.ValueKind != JsonValueKind.Null)
                     {
-                        existingShift.StartDateTime = DateTime.Parse(sharedShift.GetProperty("startDateTime").GetString());
-                        existingShift.EndDateTime = DateTime.Parse(sharedShift.GetProperty("endDateTime").GetString());
+                        existingShift.StartDateTime = DateTime.Parse(sharedShift.GetProperty("startDateTime").GetString(), null, System.Globalization.DateTimeStyles.RoundtripKind);
+                        existingShift.EndDateTime = DateTime.Parse(sharedShift.GetProperty("endDateTime").GetString(), null, System.Globalization.DateTimeStyles.RoundtripKind);
                         existingShift.Theme = sharedShift.GetProperty("theme").GetString();
                         existingShift.Notes = sharedShift.GetProperty("notes").GetString();
                     }

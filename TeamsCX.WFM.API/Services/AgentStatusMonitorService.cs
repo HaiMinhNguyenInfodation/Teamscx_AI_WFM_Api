@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using TeamsCX.WFM.API.Data;
 using TeamsCX.WFM.API.Models;
+using TeamsCX.WFM.API.Models.DTOs;
 
 namespace TeamsCX.WFM.API.Services
 {
@@ -87,7 +88,7 @@ namespace TeamsCX.WFM.API.Services
             }
 
             // Process each agent's status
-            var statusChanges = new List<AgentStatusHistory>();
+            var statusChanges = new List<TeamsCX.WFM.API.Models.AgentStatusHistory>();
             foreach (var status in statuses)
             {
                 var agent = agents.FirstOrDefault(a => a.MicrosoftUserId == status.Id);
@@ -102,7 +103,7 @@ namespace TeamsCX.WFM.API.Services
                     // Only create new history if status has changed
                     if (lastStatus == null || lastStatus.Status != MapStatus(status.Availability, status.Activity))
                     {
-                        statusChanges.Add(new AgentStatusHistory
+                        statusChanges.Add(new TeamsCX.WFM.API.Models.AgentStatusHistory
                         {
                             CreatedAt = DateTime.UtcNow,
                             AgentId = agent.Id,
