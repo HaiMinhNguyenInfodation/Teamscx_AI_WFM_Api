@@ -156,9 +156,3 @@ local.settings.json
 local.settings.*.json
 func.port
 func.port.* 
-TeamsCX.WFM.API/obj/TeamsCX.WFM.API.csproj.nuget.g.targets
-TeamsCX.WFM.API/obj/TeamsCX.WFM.API.csproj.nuget.g.props
-TeamsCX.WFM.API/obj/TeamsCX.WFM.API.csproj.nuget.dgspec.json
-TeamsCX.WFM.API/obj/project.nuget.cache
-TeamsCX.WFM.API/obj/project.assets.json
-TeamsCX.WFM.API/obj/Debug/net9.0/TeamsCX.WFM.API.assets.cache
