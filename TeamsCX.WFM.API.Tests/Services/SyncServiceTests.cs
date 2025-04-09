@@ -8,6 +8,7 @@ using TeamsCX.WFM.API.Data;
 using TeamsCX.WFM.API.Models;
 using TeamsCX.WFM.API.Services;
 using Xunit;
+using Microsoft.Extensions.Logging;
 
 namespace TeamsCX.WFM.API.Tests.Services
 {
@@ -22,8 +23,9 @@ namespace TeamsCX.WFM.API.Tests.Services
         {
             _serviceProviderMock = new Mock<IServiceProvider>();
             _graphServiceMock = new Mock<IMicrosoftGraphService>();
-            _syncService = new SyncService(_serviceProviderMock.Object, _graphServiceMock.Object);
-            
+            var loggerMock = new Mock<ILogger<SyncService>>();
+            _syncService = new SyncService(_serviceProviderMock.Object, _graphServiceMock.Object, loggerMock.Object);
+
             // Use in-memory database for testing
             _dbContextOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
@@ -138,4 +140,4 @@ namespace TeamsCX.WFM.API.Tests.Services
             Assert.Equal(updatedDescription, updatedTeam.Description);
         }
     }
-} 
+}
