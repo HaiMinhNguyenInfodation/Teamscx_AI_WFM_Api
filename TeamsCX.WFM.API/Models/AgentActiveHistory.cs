@@ -9,9 +9,6 @@ namespace TeamsCX.WFM.API.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        public DateTime CreatedAt { get; set; }
-
         public int? AgentId { get; set; }
 
         [Required]
@@ -24,5 +21,8 @@ namespace TeamsCX.WFM.API.Models
 
         [ForeignKey("QueueId")]
         public virtual Queue Queue { get; set; }
+
+        [Required]
+        public DateTime CreatedAt { get; set; }
     }
-} 
+}

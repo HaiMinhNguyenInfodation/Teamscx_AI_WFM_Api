@@ -16,11 +16,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Configure HttpClient for Microsoft Graph API
 builder.Services.AddHttpClient<IMicrosoftGraphService, MicrosoftGraphService>();
+builder.Services.AddHttpClient<AgentActiveQueueMonitorService>();
 
 // Register services
 builder.Services.AddSingleton<IMicrosoftGraphService, MicrosoftGraphService>();
 builder.Services.AddSingleton<SyncService>();
 builder.Services.AddHostedService<SyncBackgroundService>();
+builder.Services.AddHostedService<AgentActiveQueueMonitorService>();
 
 var app = builder.Build();
 

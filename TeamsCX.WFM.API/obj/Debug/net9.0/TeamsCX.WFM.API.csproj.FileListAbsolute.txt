@@ -199,8 +199,8 @@ D:\Projects\INFODATION_Projects\TeamsCX\AI\WFM\WFM_new_04_08\TeamsCX.WFM.API\obj
 D:\Projects\INFODATION_Projects\TeamsCX\AI\WFM\WFM_new_04_08\TeamsCX.WFM.API\obj\Debug\net9.0\TeamsCX.WFM.API.genruntimeconfig.cache
 D:\Projects\INFODATION_Projects\TeamsCX\AI\WFM\WFM_new_04_08\TeamsCX.WFM.API\obj\Debug\net9.0\ref\TeamsCX.WFM.API.dll
 D:\Projects\INFODATION_Projects\TeamsCX\Teamscx_AI_WFM_Api\TeamsCX.WFM.API\bin\Debug\net9.0\appsettings.Development.json
-D:\Projects\INFODATION_Projects\TeamsCX\Teamscx_AI_WFM_Api\TeamsCX.WFM.API\bin\Debug\net9.0\TeamsCX.WFM.API.staticwebassets.endpoints.json
 D:\Projects\INFODATION_Projects\TeamsCX\Teamscx_AI_WFM_Api\TeamsCX.WFM.API\bin\Debug\net9.0\appsettings.json
+D:\Projects\INFODATION_Projects\TeamsCX\Teamscx_AI_WFM_Api\TeamsCX.WFM.API\bin\Debug\net9.0\TeamsCX.WFM.API.staticwebassets.endpoints.json
 D:\Projects\INFODATION_Projects\TeamsCX\Teamscx_AI_WFM_Api\TeamsCX.WFM.API\bin\Debug\net9.0\TeamsCX.WFM.API.exe
 D:\Projects\INFODATION_Projects\TeamsCX\Teamscx_AI_WFM_Api\TeamsCX.WFM.API\bin\Debug\net9.0\TeamsCX.WFM.API.deps.json
 D:\Projects\INFODATION_Projects\TeamsCX\Teamscx_AI_WFM_Api\TeamsCX.WFM.API\bin\Debug\net9.0\TeamsCX.WFM.API.runtimeconfig.json
@@ -277,6 +277,7 @@ D:\Projects\INFODATION_Projects\TeamsCX\Teamscx_AI_WFM_Api\TeamsCX.WFM.API\bin\D
 D:\Projects\INFODATION_Projects\TeamsCX\Teamscx_AI_WFM_Api\TeamsCX.WFM.API\bin\Debug\net9.0\Microsoft.SqlServer.Server.dll
 D:\Projects\INFODATION_Projects\TeamsCX\Teamscx_AI_WFM_Api\TeamsCX.WFM.API\bin\Debug\net9.0\Microsoft.Win32.SystemEvents.dll
 D:\Projects\INFODATION_Projects\TeamsCX\Teamscx_AI_WFM_Api\TeamsCX.WFM.API\bin\Debug\net9.0\Mono.TextTemplating.dll
+D:\Projects\INFODATION_Projects\TeamsCX\Teamscx_AI_WFM_Api\TeamsCX.WFM.API\bin\Debug\net9.0\Newtonsoft.Json.dll
 D:\Projects\INFODATION_Projects\TeamsCX\Teamscx_AI_WFM_Api\TeamsCX.WFM.API\bin\Debug\net9.0\Std.UriTemplate.dll
 D:\Projects\INFODATION_Projects\TeamsCX\Teamscx_AI_WFM_Api\TeamsCX.WFM.API\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
 D:\Projects\INFODATION_Projects\TeamsCX\Teamscx_AI_WFM_Api\TeamsCX.WFM.API\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll

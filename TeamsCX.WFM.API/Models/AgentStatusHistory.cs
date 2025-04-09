@@ -10,15 +10,15 @@ namespace TeamsCX.WFM.API.Models
         public int Id { get; set; }
 
         [Required]
-        public DateTime CreatedAt { get; set; }
-
-        public int? AgentId { get; set; }
-
-        [Required]
-        [MaxLength(255)]
-        public string Status { get; set; }
+        public int AgentId { get; set; }
 
         [ForeignKey("AgentId")]
-        public virtual Agent Agent { get; set; }
+        public Agent Agent { get; set; }
+
+        [Required]
+        public AgentStatus Status { get; set; }
+
+        [Required]
+        public DateTime CreatedAt { get; set; }
     }
-} 
+}
