@@ -174,3 +174,9 @@ TeamsCX.WFM.API/obj/Debug/net9.0/TeamsCX.WFM.API.pdb
 TeamsCX.WFM.API/obj/project.assets.json
 TeamsCX.WFM.API/obj/project.nuget.cache
 TeamsCX.WFM.API/obj/TeamsCX.WFM.API.csproj.nuget.dgspec.json
+*.dll
+*.exe
+*.pdb
+*.cache
+TeamsCX.WFM.API/obj/Debug/net9.0/TeamsCX.WFM.API.AssemblyInfo.cs
+*.pdb

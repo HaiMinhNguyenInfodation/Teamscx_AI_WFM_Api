@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TeamsCX.WFM.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f5c4388e748ad9b213212163f283c9c4afd09ece")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4abba76a83a4d88cdfe7465fcde7fc7b5d6d6ff0")]
 [assembly: System.Reflection.AssemblyProductAttribute("TeamsCX.WFM.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TeamsCX.WFM.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

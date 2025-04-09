@@ -93,7 +93,7 @@ CREATE TABLE AgentStatusHistories (
     Id INT PRIMARY KEY,
     CreatedAt DATETIME NOT NULL,
     AgentId INT,
-    Status NVARCHAR(255) NOT NULL,
+    Status INT NOT NULL,
     FOREIGN KEY (AgentId) REFERENCES Agents(Id)
 );
 

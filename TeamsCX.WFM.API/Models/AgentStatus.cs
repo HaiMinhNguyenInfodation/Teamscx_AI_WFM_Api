@@ -9,6 +9,7 @@ namespace TeamsCX.WFM.API.Models
         DoNotDisturb = 4,  // Agent is in Do Not Disturb mode
         InACall = 5,       // Agent is in a call
         Presenting = 6,    // Agent is presenting
-        Inactive = 7       // Agent is inactive in the queue
+        Inactive = 7,      // Agent is inactive in the queue
+        BeRightBack = 8    // Agent is temporarily away (Be Right Back)
     }
 }

@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using TeamsCX.WFM.API.Data;
 using TeamsCX.WFM.API.Models;
 
@@ -13,11 +14,13 @@ namespace TeamsCX.WFM.API.Services
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IMicrosoftGraphService _graphService;
+        private readonly ILogger<SyncService> _logger;
 
-        public SyncService(IServiceProvider serviceProvider, IMicrosoftGraphService graphService)
+        public SyncService(IServiceProvider serviceProvider, IMicrosoftGraphService graphService, ILogger<SyncService> logger)
         {
             _serviceProvider = serviceProvider;
             _graphService = graphService;
+            _logger = logger;
         }
 
         public async Task SyncAllDataAsync()
@@ -122,7 +125,7 @@ namespace TeamsCX.WFM.API.Services
                     var rolesList = roles.Select(r => r.GetString()).ToList();
                     if (rolesList.Contains("owner"))
                     {
-                        Console.WriteLine($"Setting owner for team {team.DisplayName} to {existingAgent.DisplayName}");
+                        _logger.LogInformation($"Setting owner for team {team.DisplayName} to {existingAgent.DisplayName}");
                         team.OwnerId = microsoftUserId;
                         team.UpdatedAt = DateTime.UtcNow;
                         context.Entry(team).State = EntityState.Modified;
@@ -137,20 +140,20 @@ namespace TeamsCX.WFM.API.Services
         private async Task SyncSchedulingGroupsAsync(ApplicationDbContext context)
         {
             var teams = await context.Teams.ToListAsync();
-            Console.WriteLine($"Syncing scheduling groups for {teams.Count} teams");
+            _logger.LogInformation($"Syncing scheduling groups for {teams.Count} teams");
             foreach (var team in teams)
             {
-                Console.WriteLine($"Syncing scheduling groups for team {team.DisplayName}, owner: {team.OwnerId}, id: {team.Id}, microsoftTeamId: {team.MicrosoftTeamId}");
+                _logger.LogInformation($"Syncing scheduling groups for team {team.DisplayName}, owner: {team.OwnerId}, id: {team.Id}, microsoftTeamId: {team.MicrosoftTeamId}");
                 if (string.IsNullOrEmpty(team.OwnerId))
                 {
-                    Console.WriteLine($"Skipping scheduling group sync for team {team.DisplayName} as it has no owner");
+                    _logger.LogInformation($"Skipping scheduling group sync for team {team.DisplayName} as it has no owner");
                     continue;
                 }
 
                 var groupsResponse = await _graphService.GetSchedulingGroupsAsync(team.MicrosoftTeamId, team.OwnerId);
                 var groups = groupsResponse.GetProperty("value").EnumerateArray();
 
-                Console.WriteLine($"Processing scheduling groups for team {team.DisplayName} with owner {team.OwnerId}");
+                _logger.LogInformation($"Processing scheduling groups for team {team.DisplayName} with owner {team.OwnerId}");
 
                 foreach (var group in groups)
                 {
@@ -166,7 +169,7 @@ namespace TeamsCX.WFM.API.Services
                             CreatedAt = DateTime.UtcNow
                         };
                         context.SchedulingGroups.Add(existingGroup);
-                        Console.WriteLine($"Created new scheduling group with ID {microsoftGroupId}");
+                        _logger.LogInformation($"Created new scheduling group with ID {microsoftGroupId}");
                     }
 
                     existingGroup.DisplayName = group.GetProperty("displayName").GetString();
@@ -187,7 +190,7 @@ namespace TeamsCX.WFM.API.Services
                             SchedulingGroup = existingGroup
                         };
                         context.TeamSchedulingGroups.Add(teamSchedulingGroup);
-                        Console.WriteLine($"Created new team-scheduling group relationship for team {team.DisplayName}");
+                        _logger.LogInformation($"Created new team-scheduling group relationship for team {team.DisplayName}");
                     }
 
                     // Save changes for each team's scheduling groups
@@ -206,14 +209,14 @@ namespace TeamsCX.WFM.API.Services
             {
                 if (string.IsNullOrEmpty(team.OwnerId))
                 {
-                    Console.WriteLine($"Skipping shifts sync for team {team.DisplayName} as it has no owner");
+                    _logger.LogInformation($"Skipping shifts sync for team {team.DisplayName} as it has no owner");
                     continue;
                 }
 
                 var shiftsResponse = await _graphService.GetTeamShiftsAsync(team.MicrosoftTeamId, team.OwnerId);
                 var shifts = shiftsResponse.GetProperty("value").EnumerateArray();
 
-                Console.WriteLine($"Processing shifts for team {team.DisplayName} with owner {team.OwnerId}");
+                _logger.LogInformation($"Processing shifts for team {team.DisplayName} with owner {team.OwnerId}");
 
                 foreach (var shift in shifts)
                 {
@@ -229,7 +232,7 @@ namespace TeamsCX.WFM.API.Services
                             CreatedAt = DateTime.UtcNow
                         };
                         context.ScheduleShifts.Add(existingShift);
-                        Console.WriteLine($"Created new shift with ID {microsoftShiftId}");
+                        _logger.LogInformation($"Created new shift with ID {microsoftShiftId}");
                     }
 
                     var userId = shift.GetProperty("userId").GetString();
@@ -240,7 +243,7 @@ namespace TeamsCX.WFM.API.Services
                     }
                     else
                     {
-                        Console.WriteLine($"Warning: Agent not found for userId {userId}");
+                        _logger.LogWarning($"Agent not found for userId {userId}");
                     }
 
                     var schedulingGroupId = shift.GetProperty("schedulingGroupId").GetString();
@@ -251,7 +254,7 @@ namespace TeamsCX.WFM.API.Services
                     }
                     else
                     {
-                        Console.WriteLine($"Warning: Scheduling group not found for groupId {schedulingGroupId}");
+                        _logger.LogWarning($"Scheduling group not found for groupId {schedulingGroupId}");
                     }
 
                     var sharedShift = shift.GetProperty("sharedShift");
@@ -268,7 +271,7 @@ namespace TeamsCX.WFM.API.Services
                     await context.SaveChangesAsync();
                 }
 
-                Console.WriteLine($"Saved shifts for team {team.DisplayName}");
+                _logger.LogInformation($"Saved shifts for team {team.DisplayName}");
             }
         }
 
@@ -299,4 +302,4 @@ namespace TeamsCX.WFM.API.Services
             await context.SaveChangesAsync();
         }
     }
-} 
+}

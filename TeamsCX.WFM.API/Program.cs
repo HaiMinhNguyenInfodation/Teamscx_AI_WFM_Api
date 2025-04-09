@@ -17,12 +17,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Configure HttpClient for Microsoft Graph API
 builder.Services.AddHttpClient<IMicrosoftGraphService, MicrosoftGraphService>();
 builder.Services.AddHttpClient<AgentActiveQueueMonitorService>();
+builder.Services.AddHttpClient<AgentStatusMonitorService>();
 
 // Register services
 builder.Services.AddSingleton<IMicrosoftGraphService, MicrosoftGraphService>();
 builder.Services.AddSingleton<SyncService>();
 builder.Services.AddHostedService<SyncBackgroundService>();
 builder.Services.AddHostedService<AgentActiveQueueMonitorService>();
+builder.Services.AddHostedService<AgentStatusMonitorService>();
 
 var app = builder.Build();
 
@@ -44,7 +46,7 @@ var summaries = new[]
 
 app.MapGet("/weatherforecast", () =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
+    var forecast = Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast
         (
             DateOnly.FromDateTime(DateTime.Now.AddDays(index)),

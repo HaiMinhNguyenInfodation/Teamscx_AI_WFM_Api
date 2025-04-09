@@ -236,12 +236,10 @@ namespace TeamsCX.WFM.API.Services
                 {
                     var microsoftUserId = agent.GetProperty("ObjectId").GetString();
                     var isOptIn = agent.GetProperty("OptIn").GetBoolean();
-                    _logger.LogInformation($"Agent {microsoftUserId} isOptIn: {isOptIn}");
 
                     if (dbAgents.TryGetValue(microsoftUserId, out var dbAgent))
                     {
                         var lastStatus = lastStatuses.GetValueOrDefault(dbAgent.Id);
-                        _logger.LogInformation($"Agent {microsoftUserId} lastStatus: {lastStatus?.IsActived}");
                         if (lastStatus == null || lastStatus.IsActived != isOptIn)
                         {
                             statusChanges.Add(new AgentActiveHistory
