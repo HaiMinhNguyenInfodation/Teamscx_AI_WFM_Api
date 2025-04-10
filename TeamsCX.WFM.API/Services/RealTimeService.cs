@@ -49,6 +49,7 @@ namespace TeamsCX.WFM.API.Services
         private async Task<AgentStatusSummary> GetAgentStatusSummary(List<string> callQueues)
         {
             // Get queues and their IDs
+            _logger.LogDebug("callQueues: {callQueues}", callQueues);
             var queues = await _context.Queues
                 .Where(q => callQueues.Contains(q.MicrosoftQueueId))
                 .ToListAsync();
