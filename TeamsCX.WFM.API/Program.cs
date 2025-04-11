@@ -1,6 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using TeamsCX.WFM.API.Data;
 using TeamsCX.WFM.API.Services;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using TeamsCX.WFM.API.Services.BackgroundJobs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,14 +25,23 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Configure database
+// Add DbContext with scoped lifetime
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")),
+    ServiceLifetime.Scoped);
+
+// Add DbContextFactory with scoped lifetime
+builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")),
+    ServiceLifetime.Scoped);
 
 // Configure HttpClient for Microsoft Graph API
 builder.Services.AddHttpClient<IMicrosoftGraphService, MicrosoftGraphService>();
 builder.Services.AddHttpClient<AgentActiveQueueMonitorService>();
 builder.Services.AddHttpClient<AgentStatusMonitorService>();
+
+// Add HttpClient
+builder.Services.AddHttpClient();
 
 // Register services
 builder.Services.AddSingleton<IMicrosoftGraphService, MicrosoftGraphService>();
@@ -39,6 +52,12 @@ builder.Services.AddHostedService<AgentStatusMonitorService>();
 builder.Services.AddScoped<IRealTimeService, RealTimeService>();
 builder.Services.AddScoped<IUpToNowService, UpToNowService>();
 builder.Services.AddScoped<IAgentStatusService, AgentStatusService>();
+
+// Register QueueReportedAgentService as singleton
+builder.Services.AddSingleton<IQueueReportedAgentService, QueueReportedAgentService>();
+
+// Register QueueReportedAgentsSyncJob as hosted service
+builder.Services.AddHostedService<QueueReportedAgentsSyncJob>();
 
 var app = builder.Build();
 

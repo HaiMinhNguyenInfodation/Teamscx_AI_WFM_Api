@@ -25,7 +25,8 @@ CREATE TABLE Agents (
     DisplayName NVARCHAR(255) NOT NULL,
     Email NVARCHAR(255),
     CreatedAt DATETIME2 DEFAULT GETDATE(),
-    UpdatedAt DATETIME2 DEFAULT GETDATE()
+    UpdatedAt DATETIME2 DEFAULT GETDATE(),
+    IsReported BIT DEFAULT 0
 );
 
 -- Create SchedulingGroup Table
@@ -97,6 +98,18 @@ CREATE TABLE AgentStatusHistories (
     FOREIGN KEY (AgentId) REFERENCES Agents(Id)
 );
 
+-- Create table for tracking reported agents in queues
+CREATE TABLE QueueReportedAgents (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    QueueId INT NOT NULL,
+    AgentId INT NOT NULL,
+    IsActive BIT DEFAULT 1,
+    CreatedAt DATETIME2 DEFAULT GETDATE(),
+    UpdatedAt DATETIME2 DEFAULT GETDATE(),
+    FOREIGN KEY (QueueId) REFERENCES Queues(Id),
+    FOREIGN KEY (AgentId) REFERENCES Agents(Id)
+);
+
 -- Create Indexes for Better Performance
 CREATE INDEX IX_Queues_MicrosoftQueueId ON Queues(MicrosoftQueueId);
 CREATE INDEX IX_Teams_MicrosoftTeamId ON Teams(MicrosoftTeamId);
@@ -104,4 +117,6 @@ CREATE INDEX IX_Agents_MicrosoftUserId ON Agents(MicrosoftUserId);
 CREATE INDEX IX_SchedulingGroups_MicrosoftGroupId ON SchedulingGroups(MicrosoftGroupId);
 CREATE INDEX IX_ScheduleShifts_MicrosoftShiftId ON ScheduleShifts(MicrosoftShiftId);
 CREATE INDEX IX_ScheduleShifts_AgentId ON ScheduleShifts(AgentId);
-CREATE INDEX IX_ScheduleShifts_SchedulingGroupId ON ScheduleShifts(SchedulingGroupId); 
+CREATE INDEX IX_ScheduleShifts_SchedulingGroupId ON ScheduleShifts(SchedulingGroupId);
+CREATE INDEX IX_QueueReportedAgents_QueueId ON QueueReportedAgents(QueueId);
+CREATE INDEX IX_QueueReportedAgents_AgentId ON QueueReportedAgents(AgentId); 
