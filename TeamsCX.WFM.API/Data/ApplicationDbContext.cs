@@ -22,8 +22,18 @@ namespace TeamsCX.WFM.API.Data
         public DbSet<AgentActiveHistory> AgentActiveHistories { get; set; }
         public DbSet<AgentStatusHistory> AgentStatusHistories { get; set; }
         public DbSet<QueueReportedAgent> QueueReportedAgents { get; set; }
-        public DbSet<Call> Calls { get; set; }
-        public DbSet<CallUser> CallUsers { get; set; }
+        public DbSet<CallDirection> CallDirections { get; set; } = null!;
+        public DbSet<Caller> Callers { get; set; } = null!;
+        public DbSet<CallStatus> CallStatuses { get; set; } = null!;
+        public DbSet<CallOutcome> CallOutcomes { get; set; } = null!;
+        public DbSet<Calls> Calls { get; set; } = null!;
+        public DbSet<CallQueueReported> CallQueues { get; set; } = null!;
+        public DbSet<CallConnectedUser> CallConnectedUsers { get; set; } = null!;
+        public DbSet<CallHuntedUser> CallHuntedUsers { get; set; } = null!;
+        public DbSet<CallActivity> CallActivities { get; set; } = null!;
+        public DbSet<CallActivityMapping> CallActivityMappings { get; set; } = null!;
+        public DbSet<Classification> Classifications { get; set; } = null!;
+        public DbSet<Note> Notes { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -109,53 +119,75 @@ namespace TeamsCX.WFM.API.Data
                 .Property(e => e.IsReported)
                 .HasDefaultValue(false);
 
-            // Configure Call entity
-            modelBuilder.Entity<Call>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.CallId).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.CallerId).HasMaxLength(100);
-                entity.Property(e => e.CallerName).HasMaxLength(200);
-                entity.Property(e => e.CompanyName).HasMaxLength(200);
-                entity.Property(e => e.StartedAt).IsRequired();
-                entity.Property(e => e.LastUpdated).IsRequired();
-                entity.Property(e => e.WaitingDuration).IsRequired();
-                entity.Property(e => e.ConnectedDuration).IsRequired();
-                entity.Property(e => e.CallDuration).IsRequired();
-                entity.Property(e => e.Direction).IsRequired();
-                entity.Property(e => e.CallStatus).IsRequired();
-                entity.Property(e => e.CallOutcome).IsRequired();
-                entity.Property(e => e.CallQueues).HasMaxLength(500);
-                entity.Property(e => e.AutoAttendants).HasMaxLength(500);
-                entity.Property(e => e.ResourceAccounts).HasMaxLength(500);
-                entity.Property(e => e.IsForceEnded).IsRequired();
+            // Configure CallDirection
+            modelBuilder.Entity<CallDirection>()
+                .HasIndex(cd => cd.Direction)
+                .IsUnique();
 
-                entity.HasMany(e => e.CallUsers)
-                    .WithOne(e => e.Call)
-                    .HasForeignKey(e => e.CallId)
-                    .OnDelete(DeleteBehavior.Cascade);
-            });
+            // Configure CallStatus
+            modelBuilder.Entity<CallStatus>()
+                .HasIndex(cs => cs.Status)
+                .IsUnique();
 
-            // Configure CallUser entity
-            modelBuilder.Entity<CallUser>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.CallId).IsRequired();
-                entity.Property(e => e.AgentId).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.Role).IsRequired().HasMaxLength(50);
-                entity.Property(e => e.CreatedAt).IsRequired();
-                entity.Property(e => e.UpdatedAt).IsRequired();
+            // Configure CallOutcome
+            modelBuilder.Entity<CallOutcome>()
+                .HasIndex(co => co.Outcome)
+                .IsUnique();
 
-                entity.HasOne(e => e.Call)
-                    .WithMany(e => e.CallUsers)
-                    .HasForeignKey(e => e.CallId)
-                    .OnDelete(DeleteBehavior.Cascade);
+            // Configure CallQueueReported
+            modelBuilder.Entity<CallQueueReported>()
+                .HasIndex(cq => cq.CallId);
+            modelBuilder.Entity<CallQueueReported>()
+                .HasIndex(cq => cq.QueueId);
 
-                entity.HasOne(e => e.Agent)
-                    .WithMany()
-                    .HasForeignKey(e => e.AgentId)
-                    .OnDelete(DeleteBehavior.Restrict);
-            });
+            // Configure CallConnectedUser
+            modelBuilder.Entity<CallConnectedUser>()
+                .HasIndex(ccu => ccu.CallId);
+            modelBuilder.Entity<CallConnectedUser>()
+                .HasIndex(ccu => ccu.AgentId);
+
+            // Configure CallHuntedUser
+            modelBuilder.Entity<CallHuntedUser>()
+                .HasIndex(chu => chu.CallId);
+            modelBuilder.Entity<CallHuntedUser>()
+                .HasIndex(chu => chu.AgentId);
+
+            // Configure CallActivityMapping
+            modelBuilder.Entity<CallActivityMapping>()
+                .HasIndex(cam => cam.CallId);
+            modelBuilder.Entity<CallActivityMapping>()
+                .HasIndex(cam => cam.ActivityId);
+
+            // Configure Classification
+            modelBuilder.Entity<Classification>()
+                .HasIndex(c => c.CallId);
+            modelBuilder.Entity<Classification>()
+                .HasIndex(c => c.AgentId);
+
+            // Configure Note
+            modelBuilder.Entity<Note>()
+                .HasIndex(n => n.CallId);
+            modelBuilder.Entity<Note>()
+                .HasIndex(n => n.AgentId);
+
+            // Seed initial data
+            modelBuilder.Entity<CallStatus>().HasData(
+                new CallStatus { Id = 1, Status = "Waiting" },
+                new CallStatus { Id = 2, Status = "Connected" },
+                new CallStatus { Id = 3, Status = "Ended" }
+            );
+
+            modelBuilder.Entity<CallOutcome>().HasData(
+                new CallOutcome { Id = 1, Outcome = "Answered" },
+                new CallOutcome { Id = 2, Outcome = "Missed" },
+                new CallOutcome { Id = 3, Outcome = "Abandoned" },
+                new CallOutcome { Id = 4, Outcome = "Inprogress" }
+            );
+
+            modelBuilder.Entity<CallDirection>().HasData(
+                new CallDirection { Id = 1, Direction = "Inbound" },
+                new CallDirection { Id = 2, Direction = "Outbound" }
+            );
         }
     }
 }

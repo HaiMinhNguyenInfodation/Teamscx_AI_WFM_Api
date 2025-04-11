@@ -12,6 +12,7 @@ namespace TeamsCX.WFM.API.Services
         protected readonly ICallRetrievalService _callRetrievalService;
         protected readonly ILogger<CallSyncJob> _logger;
         protected readonly string _resourceAccounts;
+
         private readonly SemaphoreSlim _syncLock = new SemaphoreSlim(1, 1);
 
         protected CallSyncJob(
@@ -79,7 +80,7 @@ namespace TeamsCX.WFM.API.Services
                 }
             }
 
-            _logger.LogInformation("Call sync completed successfully");
+            _logger.LogInformation("Calls sync completed successfully");
         }
 
         protected abstract TimeSpan GetDelayTime();
