@@ -1,12 +1,11 @@
-using System;
-using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace TeamsCX.WFM.API.Models
 {
-    public class AdherenceRealTimeSummaryResponse
+    public class AdherenceSummaryResponse
     {
         public AgentsSummary AgentsSummary { get; set; }
-        public AgentStatusSummary AgentStatusSummary { get; set; }
+        public AgentStatusDistribution AgentStatusDistribution { get; set; }
     }
 
     public class AgentsSummary
@@ -20,14 +19,19 @@ namespace TeamsCX.WFM.API.Models
         public int LateLogIn { get; set; }
     }
 
-    public class AgentStatusSummary
+    public class AgentStatusDistribution
     {
         public int TotalAgents { get; set; }
-        public int AvailableCount { get; set; }
-        public int OnCallCount { get; set; }
-        public int BreakCount { get; set; }
-        public int MeetingCount { get; set; }
-        public int OfflineCount { get; set; }
+        public StatusData StatusData { get; set; }
+    }
+
+    public class StatusData
+    {
+        public int Available { get; set; }
+        public int OnCall { get; set; }
+        public int Break { get; set; }
+        public int Meeting{ get; set; }
+        public int Offline { get; set; }
     }
 
     public class AgentPerformanceResponse
@@ -63,23 +67,63 @@ namespace TeamsCX.WFM.API.Models
 
     public class AgentActivitiesResponse
     {
-        public List<AgentActivity> Activities { get; set; }
+        public required string AgentDisplayName { get; set; }
+
+        public required string CurrentStatus { get; set; }
+
+        public AgentScheduled Scheduled { get; set; } = new AgentScheduled();
+
+        public AgentActual Actual { get; set; } = new AgentActual();
+
+        public required string Adherence { get; set; }
     }
 
-    public class AgentActivity
+    public class AgentScheduled
     {
-        public string AgentName { get; set; }
-        public string ScheduledTime { get; set; }
-        public int IdleTime { get; set; }
-        public int Adherence { get; set; }
-        public List<ActivitySlot> Timeline { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public List<AgentShift> Shifts { get; set; } = new List<AgentShift>();
+        public DateTimeOffset? From { get; set; }
+        public DateTimeOffset? To { get; set; }
+        public double TotalHours { get; set; }
     }
 
-    public class ActivitySlot
+    public class AgentShift
     {
-        public string ActivityType { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
-        public string Status { get; set; }
+        public DateTimeOffset? From { get; set; }
+        public DateTimeOffset? To { get; set; }
+        public double TotalSeconds { get { return From.HasValue && To.HasValue ? To.Value.Subtract(From.Value).TotalSeconds : 0; } }
+        public string? DisplayText { get; set; }
+        public string? OnQueue { get; set; }
+        public List<AgentShiftActivity> Activities { get; set; } = new List<AgentShiftActivity>();
     }
-} 
+
+    public class AgentShiftActivity
+    {
+        public DateTimeOffset? From { get; set; }
+        public DateTimeOffset? To { get; set; }
+        public string? DisplayText { get; set; }
+        public double TotalSeconds { get { return From.HasValue && To.HasValue ? To.Value.Subtract(From.Value).TotalSeconds : 0; } }
+        public string? Theme { get; set; }
+    }
+
+    public class AgentActual
+    {
+        public List<AgentTimeline>? Timelines { get; set; } = new List<AgentTimeline>();
+        public List<ActiveTimeline> ActiveTimelines { get; set; } = new List<ActiveTimeline>();
+    }
+
+    public class AgentTimeline
+    {
+        public DateTimeOffset From { get; set; }
+        public DateTimeOffset To { get; set; }
+        public string? OnQueue { get; set; }
+        public string? Status { get; set; }
+    }
+
+    public class ActiveTimeline
+    {
+        public string Action { get; set; } = string.Empty;
+        public DateTime Timestamp { get; set; }
+        public string OnQueue { get; set; } = string.Empty;
+    }
+}

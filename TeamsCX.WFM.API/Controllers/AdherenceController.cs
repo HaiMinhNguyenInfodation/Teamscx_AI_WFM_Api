@@ -5,10 +5,10 @@ namespace TeamsCX.WFM.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AdherenceRealTimeController : ControllerBase
+    public class AdherenceController : ControllerBase
     {
         // Constructor for dependency injection if needed
-        public AdherenceRealTimeController()
+        public AdherenceController()
         {
         }
 
@@ -17,12 +17,12 @@ namespace TeamsCX.WFM.API.Controllers
         /// </summary>
         /// <param name="queueId">Optional queue ID filter</param>
         [HttpGet("summary")]
-        public async Task<ActionResult<AdherenceRealTimeSummaryResponse>> GetDashboardSummary(string queueId = null)
+        public async Task<ActionResult<AdherenceSummaryResponse>> GetDashboardSummary(string queueId = null)
         {
             try
             {
                 // TODO: Implement actual data retrieval logic
-                var response = new AdherenceRealTimeSummaryResponse
+                var response = new AdherenceSummaryResponse
                 {
                     AgentsSummary = new AgentsSummary
                     {
@@ -34,14 +34,17 @@ namespace TeamsCX.WFM.API.Controllers
                         EarlyLogOut = 3,
                         LateLogIn = 5
                     },
-                    AgentStatusSummary = new AgentStatusSummary
+                    AgentStatusDistribution = new AgentStatusDistribution
                     {
                         TotalAgents = 20,
-                        AvailableCount = 12,
-                        OnCallCount = 8,
-                        BreakCount = 4,
-                        MeetingCount = 3,
-                        OfflineCount = 1
+                        StatusData = new StatusData
+                        {
+                            Available = 12,
+                            OnCall = 8,
+                            Break = 4,
+                            Meeting = 3,
+                            Offline = 1
+                        }
                     }
                 };
 
@@ -131,41 +134,62 @@ namespace TeamsCX.WFM.API.Controllers
         [HttpGet("agent-activities")]
         public async Task<ActionResult<AgentActivitiesResponse>> GetAgentActivities(string queueId = null)
         {
-            try
+            var agentSchedule = new AgentActivitiesResponse
             {
-                // TODO: Implement actual data retrieval logic
-                var response = new AgentActivitiesResponse
+                AgentDisplayName = "John Doe",
+                CurrentStatus = "Active",
+                Adherence = "90%",
+                Scheduled = new AgentScheduled
                 {
-                    Activities = new List<AgentActivity>
+                    From = DateTimeOffset.UtcNow.AddHours(-8),
+                    To = DateTimeOffset.UtcNow,
+                    TotalHours = 8.0,
+                    Shifts = new List<AgentShift>
+                {
+                    new AgentShift
                     {
-                        new AgentActivity
+                        From = DateTimeOffset.UtcNow.AddHours(-8),
+                        To = DateTimeOffset.UtcNow.AddHours(-4),
+                        DisplayText = "Morning Shift",
+                        OnQueue = "Queue1",
+                        Activities = new List<AgentShiftActivity>
                         {
-                            AgentName = "John Davis",
-                            ScheduledTime = "09:00 - 05:00",
-                            IdleTime = 10,
-                            Adherence = 10,
-                            Timeline = new List<ActivitySlot>
+                            new AgentShiftActivity
                             {
-                                new ActivitySlot
-                                {
-                                    ActivityType = "Available",
-                                    StartTime = DateTime.Parse("2024-03-22T09:00:00"),
-                                    EndTime = DateTime.Parse("2024-03-22T10:00:00"),
-                                    Status = "Available"
-                                }
-                                // Add more timeline slots as needed
+                                From = DateTimeOffset.UtcNow.AddHours(-8),
+                                To = DateTimeOffset.UtcNow.AddHours(-6),
+                                DisplayText = "Customer Call",
+                                Theme = "call"
                             }
                         }
-                        // Add more agents as needed
                     }
-                };
+                }
+                },
+                Actual = new AgentActual
+                {
+                    Timelines = new List<AgentTimeline>
+                {
+                    new AgentTimeline
+                    {
+                        From = DateTimeOffset.UtcNow.AddHours(-8),
+                        To = DateTimeOffset.UtcNow.AddHours(-7),
+                        OnQueue = "Queue1",
+                        Status = "Available"
+                    }
+                },
+                    ActiveTimelines = new List<ActiveTimeline>
+                {
+                    new ActiveTimeline
+                    {
+                        Action = "Login",
+                        Timestamp = DateTime.UtcNow,
+                        OnQueue = "Queue1"
+                    }
+                }
+                }
+            };
 
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            return Ok(agentSchedule);
         }
     }
 }

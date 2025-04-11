@@ -528,6 +528,68 @@ namespace TeamsCX.WFM.API.Migrations
                     b.ToTable("Notes");
                 });
 
+            modelBuilder.Entity("TeamsCX.WFM.API.Models.Forecast", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AgentCapacityAfternoon")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AgentCapacityMorning")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CallForecastAfternoon")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CallForecastMorning")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("CallPerAgentAfternoon")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CallPerAgentMorning")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DayOfForecast")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ForecastPeriod")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int>("MaxCallForecastOnHourAfternoon")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaxCallForecastOnHourMorning")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OpenShiftNeedAfternoon")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OpenShiftNeedMorning")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QueueId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QueueId");
+
+                    b.ToTable("Forecast");
+                });
+
             modelBuilder.Entity("TeamsCX.WFM.API.Models.Queue", b =>
                 {
                     b.Property<int>("Id")
@@ -951,6 +1013,17 @@ namespace TeamsCX.WFM.API.Migrations
                     b.Navigation("Call");
                 });
 
+            modelBuilder.Entity("TeamsCX.WFM.API.Models.Forecast", b =>
+                {
+                    b.HasOne("TeamsCX.WFM.API.Models.Queue", "Queue")
+                        .WithMany("Forecasts")
+                        .HasForeignKey("QueueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Queue");
+                });
+
             modelBuilder.Entity("TeamsCX.WFM.API.Models.QueueReportedAgent", b =>
                 {
                     b.HasOne("TeamsCX.WFM.API.Models.Agent", "Agent")
@@ -1064,6 +1137,11 @@ namespace TeamsCX.WFM.API.Migrations
                     b.Navigation("Classifications");
 
                     b.Navigation("Notes");
+                });
+
+            modelBuilder.Entity("TeamsCX.WFM.API.Models.Queue", b =>
+                {
+                    b.Navigation("Forecasts");
                 });
 #pragma warning restore 612, 618
         }

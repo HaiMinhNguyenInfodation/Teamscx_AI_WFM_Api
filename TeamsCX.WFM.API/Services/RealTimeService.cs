@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using TeamsCX.WFM.API.Models.RealTime;
-using TeamsCX.WFM.API.Models;
 using TeamsCX.WFM.API.Data;
-using Microsoft.Extensions.Logging;
+using TeamsCX.WFM.API.Models;
+using TeamsCX.WFM.API.Models.RealTime;
 
 namespace TeamsCX.WFM.API.Services
 {
