@@ -8,16 +8,19 @@ namespace TeamsCX.WFM.API.Controllers
     public class CallSyncController : ControllerBase
     {
         private readonly HistoricalCallSyncJob _historicalSyncJob;
+        private readonly CallSyncService _callSyncService;
         private readonly RealTimeCallSyncJob _realTimeSyncJob;
         private readonly ILogger<CallSyncController> _logger;
 
         public CallSyncController(
             HistoricalCallSyncJob historicalSyncJob,
+            CallSyncService callSyncService,
             RealTimeCallSyncJob realTimeSyncJob,
             ILogger<CallSyncController> logger)
         {
             _historicalSyncJob = historicalSyncJob;
             _realTimeSyncJob = realTimeSyncJob;
+            _callSyncService = callSyncService;
             _logger = logger;
         }
 
@@ -27,7 +30,8 @@ namespace TeamsCX.WFM.API.Controllers
             try
             {
                 _logger.LogInformation("Triggering historical call sync");
-                await _historicalSyncJob.TriggerSyncAsync();
+                //await _historicalSyncJob.TriggerSyncAsync();
+                await _callSyncService.SyncHistoricalCallsAsync("US - CQ - Demo - Sales,US - CQ - Demo - Service,US - CQ - Demo - Support,US - CQ - Demo - Tech");
                 return Ok(new { message = "Historical sync triggered successfully" });
             }
             catch (Exception ex)
