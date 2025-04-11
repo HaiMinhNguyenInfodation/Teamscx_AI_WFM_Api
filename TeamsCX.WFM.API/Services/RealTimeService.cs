@@ -46,7 +46,7 @@ namespace TeamsCX.WFM.API.Services
             }
         }
 
-        private async Task<AgentStatusSummary> GetAgentStatusSummary(List<string> callQueues)
+        private async Task<Models.RealTime.AgentStatusSummary> GetAgentStatusSummary(List<string> callQueues)
         {
             // Get queues and their IDs
             _logger.LogDebug("callQueues: {callQueues}", callQueues);
@@ -80,7 +80,7 @@ namespace TeamsCX.WFM.API.Services
                     g => g.Count()
                 );
             _logger.LogDebug("statusDistribution: {statusDistribution}", statusDistribution);
-            return new AgentStatusSummary
+            return new Models.RealTime.AgentStatusSummary
             {
                 TotalAgents = agentIds.Count,
                 StatusDistribution = statusDistribution
