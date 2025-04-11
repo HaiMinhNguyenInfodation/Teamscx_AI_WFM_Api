@@ -20,9 +20,23 @@ namespace TeamsCX.WFM.API.Services
 
         public async Task<List<AgentStatusHistoryDTO>> GetAgentStatusHistoryAsync(List<string> callQueues, DateTime startTime, DateTime endTime)
         {
+            // Get queue IDs for the given Microsoft queue IDs
+            var queueIds = await _context.Queues
+                .Where(q => callQueues.Contains(q.MicrosoftQueueId))
+                .Select(q => q.Id)
+                .ToListAsync();
+
+            // Get agent IDs that belong to these queues through QueueReportedAgent
+            var agentIds = await _context.QueueReportedAgents
+                .Where(qra => queueIds.Contains(qra.QueueId) && qra.IsActive)
+                .Select(qra => qra.AgentId)
+                .Distinct()
+                .ToListAsync();
+
             var statusHistory = await _context.AgentStatusHistories
                 .Where(h => h.CreatedAt >= startTime && h.CreatedAt <= endTime)
                 .Include(h => h.Agent)
+                .Where(h => agentIds.Contains(h.AgentId))
                 .OrderBy(h => h.CreatedAt)
                 .ToListAsync();
 
@@ -40,8 +54,21 @@ namespace TeamsCX.WFM.API.Services
 
         public async Task<List<AgentScheduleDTO>> GetAgentSchedulesAsync(List<string> callQueues, DateTime date)
         {
+            // Get queue IDs for the given Microsoft queue IDs
+            var queueIds = await _context.Queues
+                .Where(q => callQueues.Contains(q.MicrosoftQueueId))
+                .Select(q => q.Id)
+                .ToListAsync();
+
+            // Get agent IDs that belong to these queues through QueueReportedAgent
+            var agentIds = await _context.QueueReportedAgents
+                .Where(qra => queueIds.Contains(qra.QueueId) && qra.IsActive)
+                .Select(qra => qra.AgentId)
+                .Distinct()
+                .ToListAsync();
+
             var activeAgents = await _context.AgentActiveHistories
-                .Where(h => h.IsActived)
+                .Where(h => h.IsActived && h.AgentId.HasValue && agentIds.Contains(h.AgentId.Value))
                 .Include(h => h.Agent)
                 .ToListAsync();
 
@@ -58,8 +85,21 @@ namespace TeamsCX.WFM.API.Services
 
         public async Task<List<int>> GetAgentsInCallQueuesAsync(List<string> callQueues)
         {
+            // Get queue IDs for the given Microsoft queue IDs
+            var queueIds = await _context.Queues
+                .Where(q => callQueues.Contains(q.MicrosoftQueueId))
+                .Select(q => q.Id)
+                .ToListAsync();
+
+            // Get agent IDs that belong to these queues through QueueReportedAgent
+            var agentIds = await _context.QueueReportedAgents
+                .Where(qra => queueIds.Contains(qra.QueueId) && qra.IsActive)
+                .Select(qra => qra.AgentId)
+                .Distinct()
+                .ToListAsync();
+
             return await _context.AgentActiveHistories
-                .Where(h => h.IsActived)
+                .Where(h => h.IsActived && h.AgentId.HasValue && agentIds.Contains(h.AgentId.Value))
                 .Select(h => h.AgentId.Value)
                 .Distinct()
                 .ToListAsync();

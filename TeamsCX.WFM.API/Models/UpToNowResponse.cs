@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TeamsCX.WFM.API.Models.DTOs;
 
 namespace TeamsCX.WFM.API.Models
 {
@@ -14,5 +15,7 @@ namespace TeamsCX.WFM.API.Models
         public int EarlyLogOut { get; set; }
         public int LateLogIn { get; set; }
         public List<AgentStatusRow> AgentStatuses { get; set; }
+        public List<AgentStatusHistoryDTO> AgentStatusHistory { get; set; }
+        public List<AgentScheduleDTO> AgentSchedules { get; set; }
     }
 }

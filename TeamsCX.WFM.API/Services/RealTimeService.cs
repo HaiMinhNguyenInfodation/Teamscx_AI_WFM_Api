@@ -49,21 +49,20 @@ namespace TeamsCX.WFM.API.Services
         private async Task<AgentStatusSummary> GetAgentStatusSummary(List<string> callQueues)
         {
             // Get queues and their IDs
+            _logger.LogDebug("callQueues: {callQueues}", callQueues);
             var queues = await _context.Queues
                 .Where(q => callQueues.Contains(q.MicrosoftQueueId))
                 .ToListAsync();
             var queueIds = queues.Select(q => q.Id).ToList();
             _logger.LogDebug("queueIds: {queueIds}", queueIds);
-            // Get all agents that belong to these queues through their teams
-            var agentIds = await _context.QueueTeams
-                .Where(qt => queueIds.Contains(qt.QueueId))
-                .Join(
-                    _context.TeamAgents,
-                    qt => qt.TeamId,
-                    ta => ta.TeamId,
-                    (qt, ta) => ta.AgentId)
+
+            // Get all reported agents that belong to these queues through QueueReportedAgent
+            var agentIds = await _context.QueueReportedAgents
+                .Where(qra => queueIds.Contains(qra.QueueId) && qra.IsActive)
+                .Select(qra => qra.AgentId)
                 .Distinct()
                 .ToListAsync();
+
             // Get latest status for each agent
             var latestStatuses = await _context.AgentStatusHistories
                 .Where(h => agentIds.Contains(h.AgentId))
@@ -96,14 +95,10 @@ namespace TeamsCX.WFM.API.Services
                 .ToListAsync();
             var queueIds = queues.Select(q => q.Id).ToList();
 
-            // Get all agents that belong to these queues
-            var agentIds = await _context.QueueTeams
-                .Where(qt => queueIds.Contains(qt.QueueId))
-                .Join(
-                    _context.TeamAgents,
-                    qt => qt.TeamId,
-                    ta => ta.TeamId,
-                    (qt, ta) => ta.AgentId)
+            // Get all reported agents that belong to these queues through QueueReportedAgent
+            var agentIds = await _context.QueueReportedAgents
+                .Where(qra => queueIds.Contains(qra.QueueId) && qra.IsActive)
+                .Select(qra => qra.AgentId)
                 .Distinct()
                 .ToListAsync();
 
@@ -166,12 +161,14 @@ namespace TeamsCX.WFM.API.Services
                 .Select(tsg => tsg.SchedulingGroupId)
                 .ToListAsync();
             _logger.LogDebug("schedulingGroups: {schedulingGroups}", schedulingGroups);
-            // Get agents with scheduled shifts in the scheduling groups
+
+            // Get reported agents with scheduled shifts in the scheduling groups
             var agentsWithShifts = await _context.ScheduleShifts
                 .Include(s => s.Agent)
                 .Where(s => schedulingGroups.Contains(s.SchedulingGroupId)
                     && s.StartDateTime <= currentTime
-                    && s.EndDateTime > currentTime)
+                    && s.EndDateTime > currentTime
+                    && s.Agent.IsReported)
                 .Select(s => new
                 {
                     Agent = s.Agent,
@@ -179,6 +176,7 @@ namespace TeamsCX.WFM.API.Services
                 })
                 .ToListAsync();
             _logger.LogDebug("agentsWithShifts: {agentsWithShifts}", agentsWithShifts);
+
             var result = new List<AgentRealTimeStatus>();
 
             foreach (var item in agentsWithShifts)

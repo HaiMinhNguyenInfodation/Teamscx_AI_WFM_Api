@@ -42,6 +42,11 @@ namespace TeamsCX.WFM.API.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<bool>("IsReported")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<string>("MicrosoftUserId")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -115,6 +120,121 @@ namespace TeamsCX.WFM.API.Migrations
                     b.ToTable("AgentStatusHistories");
                 });
 
+            modelBuilder.Entity("TeamsCX.WFM.API.Models.Call", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.PrimitiveCollection<string>("AutoAttendants")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<double>("CallDuration")
+                        .HasColumnType("float");
+
+                    b.Property<string>("CallId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("CallOutcome")
+                        .HasColumnType("int");
+
+                    b.PrimitiveCollection<string>("CallQueues")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("CallStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CallerId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("CallerName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("CompanyName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<double>("ConnectedDuration")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Direction")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsForceEnded")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ResourceAccounts")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("StartedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("WaitingDuration")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Calls");
+                });
+
+            modelBuilder.Entity("TeamsCX.WFM.API.Models.CallUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AgentId")
+                        .HasMaxLength(100)
+                        .HasColumnType("int");
+
+                    b.Property<int>("CallId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsConnected")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsHunted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AgentId");
+
+                    b.HasIndex("CallId");
+
+                    b.ToTable("CallUsers");
+                });
+
             modelBuilder.Entity("TeamsCX.WFM.API.Models.Queue", b =>
                 {
                     b.Property<int>("Id")
@@ -149,6 +269,44 @@ namespace TeamsCX.WFM.API.Migrations
                         .IsUnique();
 
                     b.ToTable("Queues");
+                });
+
+            modelBuilder.Entity("TeamsCX.WFM.API.Models.QueueReportedAgent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AgentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<int>("QueueId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AgentId");
+
+                    b.HasIndex("QueueId");
+
+                    b.ToTable("QueueReportedAgents");
                 });
 
             modelBuilder.Entity("TeamsCX.WFM.API.Models.QueueTeam", b =>
@@ -353,6 +511,44 @@ namespace TeamsCX.WFM.API.Migrations
                     b.Navigation("Agent");
                 });
 
+            modelBuilder.Entity("TeamsCX.WFM.API.Models.CallUser", b =>
+                {
+                    b.HasOne("TeamsCX.WFM.API.Models.Agent", "Agent")
+                        .WithMany()
+                        .HasForeignKey("AgentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TeamsCX.WFM.API.Models.Call", "Call")
+                        .WithMany("CallUsers")
+                        .HasForeignKey("CallId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Agent");
+
+                    b.Navigation("Call");
+                });
+
+            modelBuilder.Entity("TeamsCX.WFM.API.Models.QueueReportedAgent", b =>
+                {
+                    b.HasOne("TeamsCX.WFM.API.Models.Agent", "Agent")
+                        .WithMany()
+                        .HasForeignKey("AgentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TeamsCX.WFM.API.Models.Queue", "Queue")
+                        .WithMany()
+                        .HasForeignKey("QueueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Agent");
+
+                    b.Navigation("Queue");
+                });
+
             modelBuilder.Entity("TeamsCX.WFM.API.Models.QueueTeam", b =>
                 {
                     b.HasOne("TeamsCX.WFM.API.Models.Queue", "Queue")
@@ -427,6 +623,11 @@ namespace TeamsCX.WFM.API.Migrations
                     b.Navigation("SchedulingGroup");
 
                     b.Navigation("Team");
+                });
+
+            modelBuilder.Entity("TeamsCX.WFM.API.Models.Call", b =>
+                {
+                    b.Navigation("CallUsers");
                 });
 #pragma warning restore 612, 618
         }
