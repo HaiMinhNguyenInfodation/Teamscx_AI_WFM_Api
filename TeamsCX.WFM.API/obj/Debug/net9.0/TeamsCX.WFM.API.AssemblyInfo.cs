@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TeamsCX.WFM.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+59ba6b9fdf13519aeea2b1d882b2753b81cfa478")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+408b7c327a0f8319387cb3a10707e75e776e8343")]
 [assembly: System.Reflection.AssemblyProductAttribute("TeamsCX.WFM.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TeamsCX.WFM.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
