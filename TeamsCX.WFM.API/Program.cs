@@ -25,10 +25,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Add DbContext with scoped lifetime
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")),
-    ServiceLifetime.Scoped);
 
 // Add DbContextFactory with scoped lifetime
 builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
@@ -59,33 +55,41 @@ builder.Services.AddSingleton<IQueueReportedAgentService, QueueReportedAgentServ
 // Register QueueReportedAgentsSyncJob as hosted service
 builder.Services.AddHostedService<QueueReportedAgentsSyncJob>();
 
-// Register GraphQL and Call Sync services
-builder.Services.AddScoped<GraphQLCallService>(sp =>
-    new GraphQLCallService(
-        sp.GetRequiredService<HttpClient>(),
-        builder.Configuration["GraphQL:Endpoint"] ?? "https://tcx-teamsv2-demo-datasource.azurewebsites.net/api/graphql"
-    ));
+// Add GraphQL call service
+builder.Services.AddSingleton<GraphQLCallService>(provider =>
+{
+    var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
+    var httpClient = httpClientFactory.CreateClient();
+    var configuration = provider.GetRequiredService<IConfiguration>();
+    var logger = provider.GetRequiredService<ILogger<GraphQLCallService>>();
 
-// Register Call Retrieval Service
-builder.Services.AddScoped<ICallRetrievalService, CallRetrievalService>();
+    return new GraphQLCallService(httpClient, configuration["GraphQL:Endpoint"] ?? "https://tcx-teamsv2-demo-datasource.azurewebsites.net/graphql", logger);
+});
+
+// Add call sync services
+builder.Services.AddScoped<CallSyncService>();
+builder.Services.AddScoped<CallSyncBackgroundService>();
+
+// Register Call_CX Retrieval Service
+builder.Services.AddSingleton<ICallRetrievalService, CallRetrievalService>();
 
 // Register background services
 builder.Services.AddHostedService<QueueReportedAgentsSyncJob>();
 
-// Create a service provider for the sync jobs
-var serviceProvider = builder.Services.BuildServiceProvider();
+// REMOVE this line:
+// var serviceProvider = builder.Services.BuildServiceProvider();
 
-// Register sync jobs as singletons
+// REPLACE the sync job registrations with:
 builder.Services.AddSingleton<HistoricalCallSyncJob>(sp =>
     new HistoricalCallSyncJob(
-        serviceProvider.GetRequiredService<ICallRetrievalService>(),
+        sp.GetRequiredService<ICallRetrievalService>(),  // Use sp instead of serviceProvider
         sp.GetRequiredService<ILogger<HistoricalCallSyncJob>>(),
         builder.Configuration["CallSync:ResourceAccounts"] ?? "US - CQ - Demo - Sales"
     ));
 
 builder.Services.AddSingleton<RealTimeCallSyncJob>(sp =>
     new RealTimeCallSyncJob(
-        serviceProvider.GetRequiredService<ICallRetrievalService>(),
+        sp.GetRequiredService<ICallRetrievalService>(),  // Use sp instead of serviceProvider
         sp.GetRequiredService<ILogger<RealTimeCallSyncJob>>(),
         builder.Configuration["CallSync:ResourceAccounts"] ?? "US - CQ - Demo - Sales"
     ));
@@ -108,3 +112,18 @@ app.UseCors(); // Add CORS middleware
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
+
+//public class GraphQLCallService
+//{
+//    private readonly HttpClient _httpClient;
+//    private readonly string _endpoint;
+
+//    public GraphQLCallService(HttpClient httpClient, IConfiguration configuration)
+//    {
+//        _httpClient = httpClient;
+//        _endpoint = configuration["GraphQL:Endpoint"] ??
+//            throw new ArgumentNullException("GraphQL:Endpoint", "GraphQL:Endpoint configuration is missing");
+//    }
+
+//    // Rest of the class implementation
+//}
