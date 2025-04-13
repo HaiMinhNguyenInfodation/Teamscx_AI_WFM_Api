@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
 
-namespace TeamsCX.WFM.API.Models
+namespace TeamsCX.WFM.API.Models.DTOs
 {
-    public class AdherenceSummaryResponse
+    public class AdherenceResponse
     {
         public AgentsSummary AgentsSummary { get; set; }
         public AgentStatusDistribution AgentStatusDistribution { get; set; }
@@ -28,24 +28,14 @@ namespace TeamsCX.WFM.API.Models
     public class StatusData
     {
         public int Available { get; set; }
-        public int OnCall { get; set; }
-        public int Break { get; set; }
-        public int Meeting{ get; set; }
+        public int Busy { get; set; }
+        public int DoNotDisturb { get; set; }
+        public int Away { get; set; }
         public int Offline { get; set; }
-    }
-
-    public class AgentPerformanceResponse
-    {
-        public List<AgentPerformance> Agents { get; set; }
-    }
-
-    public class AgentPerformance
-    {
-        public string AgentName { get; set; }
-        public string CurrentStatus { get; set; }
-        public TimeSpan StatusDuration { get; set; }
-        public string ActiveCQ { get; set; }
-        public string ScheduledCQ { get; set; }
+        public int InACall { get; set; }
+        public int Presenting { get; set; }
+        public int Inactive { get; set; }
+        public int BeRightBack { get; set; }
     }
 
     public class QueueMetricsResponse
@@ -68,13 +58,9 @@ namespace TeamsCX.WFM.API.Models
     public class AgentActivitiesResponse
     {
         public required string AgentDisplayName { get; set; }
-
         public required string CurrentStatus { get; set; }
-
         public AgentScheduled Scheduled { get; set; } = new AgentScheduled();
-
         public AgentActual Actual { get; set; } = new AgentActual();
-
         public required string Adherence { get; set; }
     }
 

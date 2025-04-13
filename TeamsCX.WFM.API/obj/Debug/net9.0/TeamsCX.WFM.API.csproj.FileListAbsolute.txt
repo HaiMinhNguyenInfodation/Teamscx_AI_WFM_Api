@@ -394,7 +394,6 @@ D:\Projects\INFODATION_Projects\TeamsCX\Teamscx_AI_WFM_Api\TeamsCX.WFM.API\obj\D
 D:\Projects\INFODATION_Projects\TeamsCX\Teamscx_AI_WFM_Api\TeamsCX.WFM.API\obj\Debug\net9.0\staticwebassets\msbuild.buildMultiTargeting.TeamsCX.WFM.API.props
 D:\Projects\INFODATION_Projects\TeamsCX\Teamscx_AI_WFM_Api\TeamsCX.WFM.API\obj\Debug\net9.0\staticwebassets\msbuild.buildTransitive.TeamsCX.WFM.API.props
 D:\Projects\INFODATION_Projects\TeamsCX\Teamscx_AI_WFM_Api\TeamsCX.WFM.API\obj\Debug\net9.0\staticwebassets.pack.json
-D:\Projects\INFODATION_Projects\TeamsCX\Teamscx_AI_WFM_Api\TeamsCX.WFM.API\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 D:\Projects\INFODATION_Projects\TeamsCX\Teamscx_AI_WFM_Api\TeamsCX.WFM.API\obj\Debug\net9.0\TeamsCX..11205917.Up2Date
 D:\Projects\INFODATION_Projects\TeamsCX\Teamscx_AI_WFM_Api\TeamsCX.WFM.API\obj\Debug\net9.0\TeamsCX.WFM.API.dll
 D:\Projects\INFODATION_Projects\TeamsCX\Teamscx_AI_WFM_Api\TeamsCX.WFM.API\obj\Debug\net9.0\refint\TeamsCX.WFM.API.dll

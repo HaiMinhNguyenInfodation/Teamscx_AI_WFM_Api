@@ -61,7 +61,7 @@ namespace TeamsCX.WFM.API.Services
             }
         }
 
-        private async Task ProcessCallDetailAsync(CallDetail callDetail)
+        public async Task ProcessCallDetailAsync(CallDetail callDetail)
         {
             // Check if call already exists
             var existingCall = await _context.Calls

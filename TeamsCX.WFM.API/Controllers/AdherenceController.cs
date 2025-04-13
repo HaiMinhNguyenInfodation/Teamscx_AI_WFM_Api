@@ -1,5 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TeamsCX.WFM.API.Models;
+using TeamsCX.WFM.API.Services;
+using TeamsCX.WFM.API.Data;
+using TeamsCX.WFM.API.Models.DTOs;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace TeamsCX.WFM.API.Controllers
 {
@@ -7,51 +15,35 @@ namespace TeamsCX.WFM.API.Controllers
     [Route("api/[controller]")]
     public class AdherenceController : ControllerBase
     {
-        // Constructor for dependency injection if needed
-        public AdherenceController()
+        private readonly IAdherenceService _adherenceService;
+        private readonly IAgentPerformanceService _agentPerformanceService;
+        private readonly ILogger<AdherenceController> _logger;
+
+        public AdherenceController(
+            IAdherenceService adherenceService,
+            IAgentPerformanceService agentPerformanceService,
+            ILogger<AdherenceController> logger)
         {
+            _adherenceService = adherenceService;
+            _agentPerformanceService = agentPerformanceService;
+            _logger = logger;
         }
 
         /// <summary>
         /// Get dashboard summary including agent stats and status
         /// </summary>
-        /// <param name="queueId">Optional queue ID filter</param>
+        /// <param name="queueMicrosoftIds">Optional queue Microsoft IDs filter (comma-separated)</param>
         [HttpGet("summary")]
-        public async Task<ActionResult<AdherenceSummaryResponse>> GetDashboardSummary(string queueId = null)
+        public async Task<ActionResult<Models.DTOs.AdherenceResponse>> GetDashboardSummary([FromQuery] string[] queueMicrosoftIds = null)
         {
             try
             {
-                // TODO: Implement actual data retrieval logic
-                var response = new AdherenceSummaryResponse
-                {
-                    AgentsSummary = new AgentsSummary
-                    {
-                        TotalAgents = 193,
-                        AgentsLoggedIn = 3,
-                        AgentsIdlePercentage = 100,
-                        AdherencePercentage = 92,
-                        ConformancePercentage = 88,
-                        EarlyLogOut = 3,
-                        LateLogIn = 5
-                    },
-                    AgentStatusDistribution = new AgentStatusDistribution
-                    {
-                        TotalAgents = 20,
-                        StatusData = new StatusData
-                        {
-                            Available = 12,
-                            OnCall = 8,
-                            Break = 4,
-                            Meeting = 3,
-                            Offline = 1
-                        }
-                    }
-                };
-
+                var response = await _adherenceService.GetDashboardSummaryAsync(queueMicrosoftIds);
                 return Ok(response);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error getting dashboard summary");
                 return StatusCode(500, ex.Message);
             }
         }
@@ -59,33 +51,18 @@ namespace TeamsCX.WFM.API.Controllers
         /// <summary>
         /// Get agent performance data
         /// </summary>
-        /// <param name="queueId">Optional queue ID filter</param>
+        /// <param name="queueMicrosoftId">Optional queue Microsoft IDs filter (comma-separated)</param>
         [HttpGet("agent-performance")]
-        public async Task<ActionResult<AgentPerformanceResponse>> GetAgentPerformance(string queueId = null)
+        public async Task<ActionResult<AgentPerformanceResponseDTO>> GetAgentPerformance([FromQuery] List<string> queueMicrosoftId = null)
         {
             try
             {
-                // TODO: Implement actual data retrieval logic
-                var response = new AgentPerformanceResponse
-                {
-                    Agents = new List<AgentPerformance>
-                    {
-                        new AgentPerformance
-                        {
-                            AgentName = "John Doe",
-                            CurrentStatus = "Available",
-                            StatusDuration = TimeSpan.Parse("00:45:12"),
-                            ActiveCQ = "Sales",
-                            ScheduledCQ = "Sales"
-                        }
-                        // Add more agents as needed
-                    }
-                };
-
+                var response = await _agentPerformanceService.GetAgentPerformanceAsync(queueMicrosoftId);
                 return Ok(response);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error getting agent performance");
                 return StatusCode(500, ex.Message);
             }
         }
@@ -93,36 +70,18 @@ namespace TeamsCX.WFM.API.Controllers
         /// <summary>
         /// Get current call queue metrics
         /// </summary>
-        /// <param name="queueId">Optional queue ID filter</param>
+        /// <param name="queueMicrosoftIds">Optional queue Microsoft IDs filter (comma-separated)</param>
         [HttpGet("queue-metrics")]
-        public async Task<ActionResult<QueueMetricsResponse>> GetQueueMetrics(string queueId = null)
+        public async Task<ActionResult<QueueMetricsResponse>> GetQueueMetrics([FromQuery] string[] queueMicrosoftIds = null)
         {
             try
             {
-                // TODO: Implement actual data retrieval logic
-                var response = new QueueMetricsResponse
-                {
-                    Queues = new List<QueueMetrics>
-                    {
-                        new QueueMetrics
-                        {
-                            Queue = "Sales",
-                            WaitingCalls = 3,
-                            ConnectingCalls = 12,
-                            MissedCalls = 2,
-                            AnsweredCalls = 48,
-                            AverageWaitingTime = TimeSpan.Parse("00:00:42"),
-                            AverageHandleTime = TimeSpan.Parse("00:05:22"),
-                            SLAPercentage = 94
-                        }
-                        // Add more queues as needed
-                    }
-                };
-
+                var response = await _adherenceService.GetQueueMetricsAsync(queueMicrosoftIds);
                 return Ok(response);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error getting queue metrics");
                 return StatusCode(500, ex.Message);
             }
         }

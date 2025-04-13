@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TeamsCX.WFM.API.Data;
 using TeamsCX.WFM.API.Services;
+using TeamsCX.WFM.API.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -48,6 +49,12 @@ builder.Services.AddHostedService<AgentStatusMonitorService>();
 builder.Services.AddScoped<IRealTimeService, RealTimeService>();
 builder.Services.AddScoped<IUpToNowService, UpToNowService>();
 builder.Services.AddScoped<IAgentStatusService, AgentStatusService>();
+builder.Services.AddScoped<IAdherenceService, AdherenceService>();
+builder.Services.AddScoped<IAdherenceRepository, AdherenceRepository>();
+
+// Register Agent Performance services
+builder.Services.AddScoped<IAgentPerformanceService, AgentPerformanceService>();
+builder.Services.AddScoped<IAgentPerformanceRepository, AgentPerformanceRepository>();
 
 // Register QueueReportedAgentService as singleton
 builder.Services.AddSingleton<IQueueReportedAgentService, QueueReportedAgentService>();
@@ -76,27 +83,25 @@ builder.Services.AddSingleton<ICallRetrievalService, CallRetrievalService>();
 // Register background services
 builder.Services.AddHostedService<QueueReportedAgentsSyncJob>();
 
-// REMOVE this line:
-// var serviceProvider = builder.Services.BuildServiceProvider();
-
-// REPLACE the sync job registrations with:
+// Register sync jobs
 builder.Services.AddSingleton<HistoricalCallSyncJob>(sp =>
     new HistoricalCallSyncJob(
-        sp.GetRequiredService<ICallRetrievalService>(),  // Use sp instead of serviceProvider
+        sp.GetRequiredService<ICallRetrievalService>(),
         sp.GetRequiredService<ILogger<HistoricalCallSyncJob>>(),
-        builder.Configuration["CallSync:ResourceAccounts"] ?? "US - CQ - Demo - Sales"
-    ));
+        builder.Configuration["ResourceAccounts"]));
 
-builder.Services.AddSingleton<RealTimeCallSyncJob>(sp =>
-    new RealTimeCallSyncJob(
-        sp.GetRequiredService<ICallRetrievalService>(),  // Use sp instead of serviceProvider
-        sp.GetRequiredService<ILogger<RealTimeCallSyncJob>>(),
-        builder.Configuration["CallSync:ResourceAccounts"] ?? "US - CQ - Demo - Sales"
-    ));
-
-// Register the hosted services
 builder.Services.AddHostedService<HistoricalCallSyncJob>(sp => sp.GetRequiredService<HistoricalCallSyncJob>());
-builder.Services.AddHostedService<RealTimeCallSyncJob>(sp => sp.GetRequiredService<RealTimeCallSyncJob>());
+
+// Register RealTimeCallSyncJob as a hosted service with proper scoping
+builder.Services.AddHostedService<RealTimeCallSyncJob>(sp =>
+{
+    var scope = sp.CreateScope();
+    return new RealTimeCallSyncJob(
+        scope.ServiceProvider.GetRequiredService<ICallRetrievalService>(),
+        scope.ServiceProvider.GetRequiredService<ILogger<RealTimeCallSyncJob>>(),
+        builder.Configuration["ResourceAccounts"],
+        scope.ServiceProvider);
+});
 
 var app = builder.Build();
 
